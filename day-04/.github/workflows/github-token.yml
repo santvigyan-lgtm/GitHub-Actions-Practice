@@ -1,0 +1,71 @@
+# =============================================================
+# Day 4 — Problem 5: GITHUB_TOKEN Permissions
+# =============================================================
+# Demonstrates GITHUB_TOKEN usage and permission configuration
+# =============================================================
+
+name: GITHUB_TOKEN Demo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Set minimal permissions at workflow level (principle of least privilege)
+permissions:
+  contents: read
+
+jobs:
+  read-only:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (uses GITHUB_TOKEN implicitly)
+        uses: actions/checkout@v4
+
+      - name: Repo Info (read-only operations)
+        run: |
+          echo "📖 Read-only operations with GITHUB_TOKEN"
+          echo "Repository: ${{ github.repository }}"
+          echo "Default branch: ${{ github.event.repository.default_branch }}"
+
+  write-operations:
+    runs-on: ubuntu-latest
+    # Override permissions at job level for specific needs
+    permissions:
+      contents: write      # Needed to push tags
+      packages: write      # Needed to publish packages
+      issues: write        # Needed to create comments
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create a Git Tag
+        run: |
+          echo "🏷️ Creating Git tag..."
+          TAG="v1.0.${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}" || echo "Tag push skipped (may already exist)"
+          echo "✅ Tag ${TAG} created!"
+
+      - name: Token Scope Info
+        run: |
+          echo "=========================================="
+          echo "🔑 GITHUB_TOKEN PERMISSIONS"
+          echo "=========================================="
+          echo "This job has:"
+          echo "  contents: write"
+          echo "  packages: write"
+          echo "  issues: write"
+          echo ""
+          echo "The workflow default is:"
+          echo "  contents: read (all other = none)"
+          echo "=========================================="
+          echo ""
+          echo "💡 Key points for the exam:"
+          echo "  - GITHUB_TOKEN is auto-generated per workflow run"
+          echo "  - Default: write access (but you SHOULD restrict)"
+          echo "  - Set permissions: at top-level or per-job"
+          echo "  - permissions: {} = no permissions at all"
+          echo "  - Job-level overrides workflow-level"

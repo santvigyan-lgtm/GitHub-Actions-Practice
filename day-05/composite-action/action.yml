@@ -1,0 +1,59 @@
+# Composite Action: Setup & Build
+# A reusable action that installs Node.js dependencies and builds the project
+
+name: 'Setup & Build'
+description: 'Installs Node.js, dependencies, and builds the project'
+branding:
+  icon: 'package'
+  color: 'blue'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '20'
+  working-directory:
+    description: 'Directory to run commands in'
+    required: false
+    default: '.'
+
+outputs:
+  build-path:
+    description: 'Path to build output directory'
+    value: ${{ steps.build.outputs.path }}
+  node-version-used:
+    description: 'Actual Node.js version that was used'
+    value: ${{ steps.node-info.outputs.version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Get Node Version
+      id: node-info
+      shell: bash
+      run: |
+        VERSION=$(node --version)
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "📦 Using Node.js ${VERSION}"
+
+    - name: Install Dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "📥 Installing dependencies..."
+        npm ci 2>/dev/null || npm install 2>/dev/null || echo "No package.json found — skipping install"
+
+    - name: Build Project
+      id: build
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🏗️ Building project..."
+        npm run build 2>/dev/null || echo "No build script — skipping"
+        echo "path=${{ inputs.working-directory }}/dist" >> $GITHUB_OUTPUT
+        echo "✅ Build complete!"

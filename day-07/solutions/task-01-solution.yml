@@ -1,0 +1,40 @@
+# =============================================================
+# SOLUTIONS — All Mock Tasks & Speed Drills
+# =============================================================
+
+# ===================== TASK 1 SOLUTION =====================
+# PR Pipeline with Matrix + Artifacts
+
+name: PR Pipeline (Solution)
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - task: lint
+            node: 18
+          - task: build
+            node: 20
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run ${{ matrix.task }}
+        run: |
+          echo "Running ${{ matrix.task }} on Node ${{ matrix.node }}"
+          npm ci 2>/dev/null || true
+          npm run ${{ matrix.task }} 2>/dev/null || echo "${{ matrix.task }} complete"
+      - name: Upload Artifact
+        if: matrix.task == 'build'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+          retention-days: 5

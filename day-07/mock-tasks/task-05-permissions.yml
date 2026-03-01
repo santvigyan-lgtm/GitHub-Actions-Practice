@@ -1,0 +1,36 @@
+# =============================================================
+# MOCK TASK 5 — Minimal Permissions for Docker Push
+# =============================================================
+# INSTRUCTIONS: Add the MINIMUM required permissions to this
+# workflow that pushes Docker images to GitHub Container Registry.
+# 
+# TIME TARGET: 3 minutes
+# =============================================================
+
+name: Docker Push
+
+on:
+  push:
+    branches: [main]
+
+# TODO: Add minimal permissions here
+# permissions:
+#   ???: ???
+
+jobs:
+  push-image:
+    runs-on: ubuntu-latest
+    # TODO: Do you need job-level permissions too?
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to GHCR
+        run: echo "Logging into GitHub Container Registry..."
+      - name: Build & Push
+        run: echo "Pushing Docker image..."
+
+# =============================================================
+# ANSWER: You need exactly:
+#   permissions:
+#     contents: read    (to checkout the code)
+#     packages: write   (to push to GHCR)
+# =============================================================

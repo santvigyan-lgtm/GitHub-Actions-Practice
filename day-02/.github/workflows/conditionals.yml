@@ -1,0 +1,72 @@
+# =============================================================
+# Day 2 — Problem 3: Conditionals & Error Handling
+# =============================================================
+# Demonstrates: if:, failure(), always(), continue-on-error
+# =============================================================
+
+name: Conditionals Demo
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+
+jobs:
+  conditionals:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 — Always runs (default success)
+        run: echo "✅ Step 1 passed!"
+
+      - name: Step 2 — Intentionally fails
+        id: failing-step
+        continue-on-error: true
+        run: |
+          echo "❌ This step will fail intentionally"
+          exit 1
+
+      - name: Step 3 — Runs because continue-on-error was true
+        run: |
+          echo "🔄 Step 3 runs because Step 2 had continue-on-error: true"
+          echo "Step 2 outcome: ${{ steps.failing-step.outcome }}"
+          echo "Step 2 conclusion: ${{ steps.failing-step.conclusion }}"
+
+      - name: Step 4 — Only on failure (won't run here)
+        if: failure()
+        run: echo "🚨 This runs only if a step failed WITHOUT continue-on-error"
+
+      - name: Step 5 — Always runs (cleanup)
+        if: always()
+        run: |
+          echo "🧹 Cleanup step — runs regardless of status"
+          echo "This is like a 'finally' block"
+
+  branch-conditional:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Main branch only
+        if: github.ref == 'refs/heads/main'
+        run: echo "🏠 Running on main branch"
+
+      - name: Non-main branch only
+        if: github.ref != 'refs/heads/main'
+        run: echo "🌿 Running on branch: ${{ github.ref_name }}"
+
+      - name: PR only
+        if: github.event_name == 'pull_request'
+        run: echo "🔀 This is a PR event"
+
+      - name: Manual trigger only
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "👆 Manually triggered"
+
+  timeout-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Quick step with timeout
+        timeout-minutes: 2
+        run: |
+          echo "⏱️ This step has a 2-minute timeout"
+          echo "The job has a 10-minute timeout"
+          echo "Step timeout overrides job timeout for this step"

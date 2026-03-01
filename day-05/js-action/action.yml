@@ -1,0 +1,29 @@
+# JavaScript Action: Greeting Action
+# Uses @actions/core for input/output handling
+
+name: 'Greeting Action'
+description: 'Greets someone and records the greeting time'
+branding:
+  icon: 'smile'
+  color: 'green'
+
+inputs:
+  who-to-greet:
+    description: 'Who to greet'
+    required: true
+  greeting-style:
+    description: 'Style of greeting (formal, casual, pirate)'
+    required: false
+    default: 'casual'
+
+outputs:
+  greeting-time:
+    description: 'The time when we greeted the person'
+  greeting-message:
+    description: 'The full greeting message'
+
+runs:
+  using: 'node20'
+  main: 'index.js'
+  # pre: 'setup.js'       # Runs before main (optional)
+  # post: 'cleanup.js'    # Runs after main, even on failure (optional)

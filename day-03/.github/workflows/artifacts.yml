@@ -1,0 +1,80 @@
+# =============================================================
+# Day 3 — Problem 2: Artifact Upload & Download
+# =============================================================
+# Job 1: Generate + upload artifact
+# Job 2: Download artifact + read contents
+# =============================================================
+
+name: Artifacts Demo
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Build Output
+        run: |
+          mkdir -p build-output
+          echo "Build Version: 1.0.${{ github.run_number }}" > build-output/build-info.txt
+          echo "Commit: ${{ github.sha }}" >> build-output/build-info.txt
+          echo "Branch: ${{ github.ref_name }}" >> build-output/build-info.txt
+          echo "Built at: $(date -u)" >> build-output/build-info.txt
+          echo "Actor: ${{ github.actor }}" >> build-output/build-info.txt
+
+          # Simulate compiled output
+          echo "console.log('Compiled app v1.0.${{ github.run_number }}');" > build-output/app.min.js
+
+          echo "📦 Build output generated!"
+          cat build-output/build-info.txt
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-${{ github.run_number }}
+          path: build-output/
+          retention-days: 5
+          if-no-files-found: error
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output-${{ github.run_number }}
+          path: downloaded-build/
+
+      - name: Verify Artifact Contents
+        run: |
+          echo "📥 Downloaded artifact contents:"
+          echo "=========================================="
+          ls -la downloaded-build/
+          echo "=========================================="
+          echo "📄 Build Info:"
+          cat downloaded-build/build-info.txt
+          echo "=========================================="
+          echo "📄 Compiled App:"
+          cat downloaded-build/app.min.js
+          echo "=========================================="
+          echo "✅ Artifact verification passed!"
+
+  deploy:
+    needs: [build, test]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Build for Deployment
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output-${{ github.run_number }}
+
+      - name: Deploy
+        run: |
+          echo "🚀 Deploying build..."
+          cat build-info.txt
+          echo "✅ Deployment complete!"

@@ -1,0 +1,11 @@
+# =============================================================
+# SPEED DRILL 3 — Permissions block
+# TIME: 2 minutes | TRY WRITING FROM SCRATCH!
+# =============================================================
+# Write the correct permissions block for a workflow that:
+# - Reads repository contents
+# - Writes to GitHub Packages
+# - Uses OIDC for cloud auth
+# =============================================================
+
+# YOUR CODE HERE:

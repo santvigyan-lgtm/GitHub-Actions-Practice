@@ -1,0 +1,56 @@
+# =============================================================
+# SOLUTION — Task 3: Reusable Workflow + Caller
+# =============================================================
+
+# ---- REUSABLE WORKFLOW ----
+name: Deploy (Reusable)
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image-tag:
+        required: true
+        type: string
+    secrets:
+      PROD_KEY:
+        required: true
+    outputs:
+      deploy-url:
+        value: ${{ jobs.deploy.outputs.url }}
+
+jobs:
+  deploy:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Deploy
+        id: deploy
+        run: |
+          echo "Deploying ${{ inputs.image-tag }} to ${{ inputs.environment }}"
+          echo "url=https://app-${{ inputs.environment }}.example.com" >> $GITHUB_OUTPUT
+
+# ---- CALLER WORKFLOW (separate file) ----
+# name: CI Pipeline
+# on:
+#   push:
+#     branches: [main]
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
+#     steps:
+#       - id: tag
+#         run: echo "tag=v1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+#   deploy:
+#     needs: build
+#     uses: ./.github/workflows/deploy-reusable.yml
+#     with:
+#       environment: production
+#       image-tag: ${{ needs.build.outputs.tag }}
+#     secrets:
+#       PROD_KEY: ${{ secrets.PROD_KEY }}

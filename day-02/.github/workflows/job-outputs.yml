@@ -1,0 +1,63 @@
+# =============================================================
+# Day 2 — Problem 4: Job Outputs
+# =============================================================
+# Pass outputs from one job to another using $GITHUB_OUTPUT
+# =============================================================
+
+name: Job Outputs Demo
+
+on:
+  push:
+    branches: ['*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set-version.outputs.version }}
+      image-tag: ${{ steps.set-tag.outputs.tag }}
+      commit-short: ${{ steps.set-tag.outputs.commit-short }}
+    steps:
+      - name: Set Version
+        id: set-version
+        run: |
+          VERSION="2.1.${{ github.run_number }}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "📦 Version set to: ${VERSION}"
+
+      - name: Set Docker Tag
+        id: set-tag
+        run: |
+          SHORT_SHA="${{ github.sha }}"
+          SHORT_SHA="${SHORT_SHA:0:7}"
+          TAG="myapp:${SHORT_SHA}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "commit-short=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "🐳 Docker tag: ${TAG}"
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read Build Outputs
+        run: |
+          echo "=========================================="
+          echo "📦 Outputs from BUILD job:"
+          echo "=========================================="
+          echo "Version:      ${{ needs.build.outputs.version }}"
+          echo "Image Tag:    ${{ needs.build.outputs.image-tag }}"
+          echo "Commit Short: ${{ needs.build.outputs.commit-short }}"
+          echo "=========================================="
+
+  deploy:
+    needs: [build, test]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy with Build Info
+        run: |
+          echo "🚀 Deploying:"
+          echo "  Version: ${{ needs.build.outputs.version }}"
+          echo "  Image:   ${{ needs.build.outputs.image-tag }}"
+          echo "  Commit:  ${{ needs.build.outputs.commit-short }}"
+          echo "✅ Deployment complete!"

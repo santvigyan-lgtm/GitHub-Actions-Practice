@@ -1,0 +1,11 @@
+# =============================================================
+# SPEED DRILL 2 — 3-job pipeline with outputs
+# TIME: 4 minutes | TRY WRITING FROM SCRATCH!
+# =============================================================
+# Write a pipeline: build → test → deploy
+# - build outputs a version string
+# - test reads the version from build
+# - deploy reads the version and deploys
+# =============================================================
+
+# YOUR CODE HERE:

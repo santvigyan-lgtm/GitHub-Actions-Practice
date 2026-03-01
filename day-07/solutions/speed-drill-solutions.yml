@@ -1,0 +1,115 @@
+# =============================================================
+# SOLUTIONS — All Speed Drills
+# =============================================================
+
+# ===================== DRILL 1 SOLUTION =====================
+# workflow_dispatch with 3 inputs (3 min)
+name: Speed Drill 1
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Deployment message'
+        required: true
+        type: string
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        type: boolean
+        default: false
+      env:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options: [dev, staging, prod]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Message: ${{ inputs.message }}"
+          echo "Debug: ${{ inputs.debug }}"
+          echo "Env: ${{ inputs.env }}"
+
+---
+
+# ===================== DRILL 2 SOLUTION =====================
+# 3-job pipeline with outputs (4 min)
+# name: Speed Drill 2
+# on: push
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       version: ${{ steps.ver.outputs.version }}
+#     steps:
+#       - id: ver
+#         run: echo "version=1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+#   test:
+#     needs: build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "Testing v${{ needs.build.outputs.version }}"
+#   deploy:
+#     needs: [build, test]
+#     if: github.ref == 'refs/heads/main'
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "Deploying v${{ needs.build.outputs.version }}"
+
+# ===================== DRILL 3 SOLUTION =====================
+# Permissions block (2 min)
+# permissions:
+#   contents: read
+#   packages: write
+#   id-token: write
+
+# ===================== DRILL 4 SOLUTION =====================
+# Composite action.yml (5 min)
+# name: 'Code Quality'
+# description: 'Runs quality checks'
+# inputs:
+#   tool-version:
+#     description: 'Tool version'
+#     default: 'latest'
+#   scan-path:
+#     description: 'Path to scan'
+#     default: '.'
+# outputs:
+#   result-count:
+#     description: 'Issues found'
+#     value: ${{ steps.check.outputs.count }}
+# runs:
+#   using: 'composite'
+#   steps:
+#     - name: Install
+#       shell: bash
+#       run: echo "Installing v${{ inputs.tool-version }}"
+#     - name: Check
+#       id: check
+#       shell: bash
+#       run: |
+#         echo "Scanning ${{ inputs.scan-path }}"
+#         echo "count=0" >> $GITHUB_OUTPUT
+
+# ===================== DRILL 5 SOLUTION =====================
+# Matrix with include/exclude (3 min)
+# jobs:
+#   test:
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         python: ['3.9', '3.10', '3.11']
+#         os: [ubuntu-latest, windows-latest]
+#         include:
+#           - python: '3.12'
+#             os: ubuntu-latest
+#         exclude:
+#           - python: '3.9'
+#             os: windows-latest
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - uses: actions/setup-python@v5
+#         with:
+#           python-version: ${{ matrix.python }}
+#       - run: python --version

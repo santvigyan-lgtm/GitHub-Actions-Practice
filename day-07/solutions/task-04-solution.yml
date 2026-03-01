@@ -1,0 +1,61 @@
+# =============================================================
+# SOLUTION — Task 4: Composite Security Action
+# =============================================================
+
+name: 'Security Scanner'
+description: 'Scans code for vulnerabilities and fails if issues found'
+branding:
+  icon: 'shield'
+  color: 'red'
+
+inputs:
+  scan-path:
+    description: 'Path to scan for vulnerabilities'
+    required: false
+    default: '.'
+  severity-threshold:
+    description: 'Minimum severity to report (low, medium, high, critical)'
+    required: false
+    default: 'medium'
+
+outputs:
+  vulnerability-count:
+    description: 'Number of vulnerabilities found'
+    value: ${{ steps.scan.outputs.count }}
+  scan-report:
+    description: 'Path to the scan report'
+    value: ${{ steps.scan.outputs.report }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Scanner
+      shell: bash
+      run: |
+        echo "📦 Installing security scanner..."
+        echo "Scanner installed (simulated)"
+
+    - name: Run Security Scan
+      id: scan
+      shell: bash
+      run: |
+        echo "🔍 Scanning ${{ inputs.scan-path }}..."
+        echo "Severity threshold: ${{ inputs.severity-threshold }}"
+        # Simulate scan (replace with real scanner like trivy, snyk, etc.)
+        VULN_COUNT=0  # Change to > 0 to test failure
+        echo "count=${VULN_COUNT}" >> $GITHUB_OUTPUT
+        echo "report=security-report.json" >> $GITHUB_OUTPUT
+        echo "Found ${VULN_COUNT} vulnerabilities"
+
+    - name: Fail if Vulnerabilities Found
+      shell: bash
+      if: ${{ steps.scan.outputs.count != '0' }}
+      run: |
+        echo "❌ Found ${{ steps.scan.outputs.count }} vulnerabilities!"
+        echo "Failing the workflow..."
+        exit 1
+
+    - name: All Clear
+      shell: bash
+      if: ${{ steps.scan.outputs.count == '0' }}
+      run: echo "✅ No vulnerabilities found!"

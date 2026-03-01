@@ -1,0 +1,25 @@
+# =============================================================
+# Day 1 — Problem 1: Hello World Workflow
+# =============================================================
+# Trigger: push to any branch
+# Task: One job, two steps — echo a message and print runner OS
+# =============================================================
+
+name: Hello GitHub Actions
+
+on:
+  push:
+    branches: ['*']
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say Hello
+        run: echo "Hello GitHub Actions! 🚀"
+
+      - name: Print Runner OS
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Arch: ${{ runner.arch }}"
+          echo "Workspace: ${{ github.workspace }}"

@@ -1,0 +1,83 @@
+# =============================================================
+# Day 6 — OIDC-Based Cloud Authentication
+# =============================================================
+# Demonstrates: Keyless cloud auth using OpenID Connect
+# No long-lived access keys stored as secrets!
+# =============================================================
+
+name: OIDC Cloud Auth
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write    # Required for OIDC token request
+
+jobs:
+  deploy-to-aws:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # OIDC-based AWS authentication (no long-lived secrets)
+      # Uncomment and configure when you have AWS set up:
+      # - name: Configure AWS Credentials (OIDC)
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::123456789012:role/github-actions-role
+      #     aws-region: us-east-1
+
+      - name: OIDC Explanation
+        run: |
+          echo "=========================================="
+          echo "🔐 OIDC AUTHENTICATION"
+          echo "=========================================="
+          echo ""
+          echo "OIDC (OpenID Connect) enables GitHub Actions to"
+          echo "authenticate with cloud providers WITHOUT storing"
+          echo "long-lived access keys as secrets."
+          echo ""
+          echo "HOW IT WORKS:"
+          echo "  1. GitHub generates a short-lived OIDC token"
+          echo "  2. Token is sent to the cloud provider (AWS/GCP/Azure)"
+          echo "  3. Cloud provider verifies token and issues credentials"
+          echo "  4. Credentials expire after the workflow run"
+          echo ""
+          echo "REQUIREMENTS:"
+          echo "  - permissions: id-token: write"
+          echo "  - Cloud provider trust policy for GitHub OIDC"
+          echo "  - aws-actions/configure-aws-credentials@v4"
+          echo ""
+          echo "WHY BETTER THAN SECRETS?"
+          echo "  ✅ No secret rotation needed"
+          echo "  ✅ Credentials are short-lived"
+          echo "  ✅ No risk of leaked long-lived keys"
+          echo "  ✅ Follows zero-trust principles"
+          echo "=========================================="
+
+  deploy-to-azure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure OIDC Info
+        run: |
+          echo "🔵 Azure OIDC uses:"
+          echo "  azure/login@v1 action"
+          echo "  with:"
+          echo "    client-id: your-app-id"
+          echo "    tenant-id: your-tenant-id"
+          echo "    subscription-id: your-sub-id"
+
+  deploy-to-gcp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GCP OIDC Info
+        run: |
+          echo "🟡 GCP OIDC uses:"
+          echo "  google-github-actions/auth@v2 action"
+          echo "  with:"
+          echo "    workload_identity_provider: projects/.../providers/..."
+          echo "    service_account: sa@project.iam.gserviceaccount.com"

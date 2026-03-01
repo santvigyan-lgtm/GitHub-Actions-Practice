@@ -1,0 +1,84 @@
+# =============================================================
+# Day 4 — Problem 3: Reusable Workflow
+# =============================================================
+# A reusable workflow triggered by workflow_call
+# Accepts inputs, secrets, and produces outputs
+# =============================================================
+
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Target deployment environment'
+        required: true
+        type: string
+      image-tag:
+        description: 'Docker image tag to deploy'
+        required: true
+        type: string
+      dry-run:
+        description: 'Perform a dry run without actual deployment'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      DEPLOY_KEY:
+        description: 'Deployment authentication key'
+        required: true
+    outputs:
+      deploy-url:
+        description: 'URL of the deployed application'
+        value: ${{ jobs.deploy.outputs.url }}
+      deploy-status:
+        description: 'Status of the deployment'
+        value: ${{ jobs.deploy.outputs.status }}
+
+jobs:
+  deploy:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+      status: ${{ steps.deploy.outputs.status }}
+    steps:
+      - name: Validate Inputs
+        run: |
+          echo "=========================================="
+          echo "📋 DEPLOYMENT CONFIGURATION"
+          echo "=========================================="
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Image Tag:   ${{ inputs.image-tag }}"
+          echo "Dry Run:     ${{ inputs.dry-run }}"
+          echo "=========================================="
+
+      - name: Check Deploy Key
+        run: |
+          if [ -n "${{ secrets.DEPLOY_KEY }}" ]; then
+            echo "✅ DEPLOY_KEY is available"
+          else
+            echo "❌ DEPLOY_KEY is missing!"
+            exit 1
+          fi
+
+      - name: Deploy Application
+        id: deploy
+        run: |
+          if [ "${{ inputs.dry-run }}" == "true" ]; then
+            echo "🧪 DRY RUN — No actual deployment"
+            echo "url=https://dry-run-${{ inputs.environment }}.example.com" >> $GITHUB_OUTPUT
+            echo "status=dry-run-complete" >> $GITHUB_OUTPUT
+          else
+            echo "🚀 Deploying ${{ inputs.image-tag }} to ${{ inputs.environment }}..."
+            sleep 2
+            echo "url=https://app-${{ inputs.environment }}.example.com" >> $GITHUB_OUTPUT
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "✅ Deployment complete!"
+          fi
+
+      - name: Post-Deploy Verification
+        run: |
+          echo "🔍 Verifying deployment..."
+          echo "URL: ${{ steps.deploy.outputs.url }}"
+          echo "Status: ${{ steps.deploy.outputs.status }}"

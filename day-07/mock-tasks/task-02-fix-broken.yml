@@ -1,0 +1,62 @@
+# =============================================================
+# MOCK TASK 2 — Debug Broken YAML
+# =============================================================
+# INSTRUCTIONS: This workflow has BUGS. Find and fix them!
+# There are 3 bugs hidden in this workflow.
+# 
+# TIME TARGET: 5 minutes
+# =============================================================
+
+name: Broken Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: ver
+        run: echo 'version=1.0.1' >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # BUG 1: if: condition is at the JOB level — is this what we want?
+    # Or should it be at the STEP level?
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy
+        run: echo "Deploying ${{ needs.build.outputs.version }}"
+
+      # BUG 2: This step uses failure() but there's no failing step above
+      # What will happen?
+      - name: Notify
+        if: failure()
+        run: echo "Deploy failed!"
+
+  cleanup:
+    # BUG 3: needs references a job that doesn't exist
+    needs: [build, test, deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Cleanup complete"
+
+# =============================================================
+# ANSWER KEY:
+# BUG 1: if: at job level is correct IF we want to skip the entire 
+#         deploy job. But if the intent is to skip just the step,
+#         it should be on the step. (Not necessarily a bug — know the difference!)
+# 
+# BUG 2: failure() will be false because no step failed above.
+#         The Notify step will NEVER run. Solution: use if: always()
+#         or remove the condition.
+# 
+# BUG 3: needs references 'test' which doesn't exist as a job.
+#         Fix: needs: [build, deploy]
+# =============================================================

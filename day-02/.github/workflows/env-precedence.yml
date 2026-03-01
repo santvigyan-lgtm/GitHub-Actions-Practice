@@ -1,0 +1,75 @@
+# =============================================================
+# Day 2 — Problem 5: Environment Variable Precedence
+# =============================================================
+# Set env at workflow/job/step level and observe precedence
+# Step > Job > Workflow
+# =============================================================
+
+name: Env Precedence Demo
+
+on:
+  push:
+    branches: ['*']
+
+# Workflow-level environment variables
+env:
+  MY_VAR: "workflow-level"
+  SHARED_VAR: "set-at-workflow"
+  APP_NAME: "My Application"
+
+jobs:
+  precedence-test:
+    runs-on: ubuntu-latest
+    # Job-level environment variables (override workflow-level)
+    env:
+      MY_VAR: "job-level"
+      JOB_ONLY: "only-in-this-job"
+
+    steps:
+      - name: Step 1 — Job level wins over workflow
+        run: |
+          echo "MY_VAR = $MY_VAR"          # job-level (overrides workflow-level)
+          echo "SHARED_VAR = $SHARED_VAR"  # set-at-workflow (inherited)
+          echo "APP_NAME = $APP_NAME"      # My Application (inherited)
+          echo "JOB_ONLY = $JOB_ONLY"      # only-in-this-job
+
+      - name: Step 2 — Step level wins over everything
+        env:
+          MY_VAR: "step-level"
+        run: |
+          echo "MY_VAR = $MY_VAR"          # step-level (overrides job & workflow)
+          echo "SHARED_VAR = $SHARED_VAR"  # set-at-workflow (inherited)
+          echo "JOB_ONLY = $JOB_ONLY"      # only-in-this-job (inherited from job)
+
+      - name: Step 3 — Back to job level
+        run: |
+          echo "MY_VAR = $MY_VAR"          # job-level (step override was only for step 2)
+
+  another-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Workflow level only
+        run: |
+          echo "MY_VAR = $MY_VAR"          # workflow-level (no job override)
+          echo "SHARED_VAR = $SHARED_VAR"  # set-at-workflow (inherited)
+          echo "APP_NAME = $APP_NAME"      # My Application (inherited)
+          echo "JOB_ONLY = ${JOB_ONLY:-NOT_SET}"  # NOT_SET (job-level vars are scoped to that job)
+
+  using-expression-syntax:
+    runs-on: ubuntu-latest
+    env:
+      GREETING: "Hello from expressions"
+    steps:
+      - name: Expression syntax vs shell syntax
+        env:
+          STEP_VAR: "step-value"
+        run: |
+          # Using shell syntax ($VAR)
+          echo "Shell: $GREETING"
+          echo "Shell: $STEP_VAR"
+
+          # Using expression syntax (${{ env.VAR }})
+          echo "Expression: ${{ env.GREETING }}"
+          echo "Expression: ${{ env.STEP_VAR }}"
+
+          # Both work! But expressions are evaluated BEFORE the shell runs

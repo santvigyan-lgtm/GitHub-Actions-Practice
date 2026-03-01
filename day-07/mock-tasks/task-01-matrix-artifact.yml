@@ -1,0 +1,16 @@
+# =============================================================
+# MOCK TASK 1 — PR Pipeline with Matrix + Artifacts
+# =============================================================
+# INSTRUCTIONS: Write a workflow that:
+# - Triggers on PR to main
+# - Runs lint on Node 18 and build on Node 20 (use matrix)
+# - Uploads the build artifact
+# 
+# TIME TARGET: 8 minutes
+# TRY WRITING THIS FROM SCRATCH BEFORE LOOKING AT THE SOLUTION!
+# =============================================================
+
+# YOUR CODE HERE:
+# name: ???
+# on: ???
+# jobs: ???

@@ -1,0 +1,82 @@
+# =============================================================
+# Day 5 — Test All 3 Action Types
+# =============================================================
+# Tests composite, JavaScript, and Docker actions in one workflow
+# =============================================================
+
+name: Test Custom Actions
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+
+jobs:
+  test-composite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Composite Action
+        id: build
+        uses: ./day-05/composite-action
+        with:
+          node-version: '20'
+          working-directory: '.'
+
+      - name: Check Composite Outputs
+        run: |
+          echo "📦 Composite Action Results:"
+          echo "Build Path: ${{ steps.build.outputs.build-path }}"
+          echo "Node Version: ${{ steps.build.outputs.node-version-used }}"
+
+  test-javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use JavaScript Action
+        id: greet
+        uses: ./day-05/js-action
+        with:
+          who-to-greet: 'GitHub Actions Learner'
+          greeting-style: 'casual'
+
+      - name: Check JS Action Outputs
+        run: |
+          echo "👋 JS Action Results:"
+          echo "Greeting Time: ${{ steps.greet.outputs.greeting-time }}"
+          echo "Message: ${{ steps.greet.outputs.greeting-message }}"
+
+  test-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Docker Action
+        id: docker-greet
+        uses: ./day-05/docker-action
+        with:
+          who-to-greet: 'Docker Fan'
+
+      - name: Check Docker Action Outputs
+        run: |
+          echo "🐳 Docker Action Results:"
+          echo "Greeting Time: ${{ steps.docker-greet.outputs.greeting-time }}"
+
+  summary:
+    needs: [test-composite, test-javascript, test-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All Actions Tested
+        run: |
+          echo "=========================================="
+          echo "✅ ALL 3 ACTION TYPES TESTED SUCCESSFULLY"
+          echo "=========================================="
+          echo "1. Composite Action  → ✅"
+          echo "2. JavaScript Action → ✅"
+          echo "3. Docker Action     → ✅"
+          echo "=========================================="

@@ -1,0 +1,15 @@
+# CODEOWNERS — Require reviews for critical file changes
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Workflow files — require security team review
+.github/workflows/**    @security-team @devops-team
+
+# Action definitions — require platform team review
+**/action.yml           @platform-team
+
+# Dependabot config — require devops team review
+.github/dependabot.yml  @devops-team
+
+# Infrastructure files
+Dockerfile              @devops-team
+docker-compose*.yml     @devops-team

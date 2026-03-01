@@ -1,0 +1,58 @@
+# =============================================================
+# Day 1 — Problem 3: Manual Trigger with Inputs
+# =============================================================
+# Trigger: workflow_dispatch with 3 input parameters
+# Task: Allow manual triggers with environment, debug, message
+# =============================================================
+
+name: Manual Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: 'dev'
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        type: boolean
+        default: false
+      message:
+        description: 'Deployment message'
+        required: false
+        type: string
+        default: 'Manual deployment triggered'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Deployment Info
+        run: |
+          echo "🚀 Manual Deployment Triggered!"
+          echo "================================"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Debug Mode:  ${{ github.event.inputs.debug }}"
+          echo "Message:     ${{ github.event.inputs.message }}"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "================================"
+
+      - name: Debug Info
+        if: ${{ github.event.inputs.debug == 'true' }}
+        run: |
+          echo "🐛 Debug mode is ON"
+          echo "Full event payload:"
+          echo '${{ toJSON(github.event) }}'
+
+      - name: Simulate Deployment
+        run: |
+          echo "Deploying to ${{ github.event.inputs.environment }}..."
+          sleep 2
+          echo "✅ Deployment complete!"

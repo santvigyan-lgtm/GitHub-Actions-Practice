@@ -1,0 +1,27 @@
+# =============================================================
+# MOCK TASK 3 — Extract Reusable Workflow
+# =============================================================
+# INSTRUCTIONS: Create a reusable workflow with:
+# - inputs: environment (string), image-tag (string)
+# - secrets: PROD_KEY (required)
+# - outputs: deploy-url
+# Then create a caller workflow that uses it.
+# 
+# TIME TARGET: 10 minutes
+# TRY WRITING FROM SCRATCH!
+# =============================================================
+
+# YOUR CODE HERE — REUSABLE WORKFLOW:
+# on:
+#   workflow_call:
+#     inputs: ???
+#     secrets: ???
+#     outputs: ???
+# jobs: ???
+
+# ---- Then create a CALLER workflow separately ----
+# jobs:
+#   call-deploy:
+#     uses: ./.github/workflows/???
+#     with: ???
+#     secrets: ???

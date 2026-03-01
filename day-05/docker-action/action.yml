@@ -1,0 +1,26 @@
+# Docker Container Action: Hello Docker
+# Runs a greeting script inside a Docker container
+
+name: 'Hello Docker Action'
+description: 'Greets someone from inside a Docker container'
+branding:
+  icon: 'box'
+  color: 'purple'
+
+inputs:
+  who-to-greet:
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+
+outputs:
+  greeting-time:
+    description: 'The time of the greeting'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.who-to-greet }}
+  env:
+    GREETING_PREFIX: 'Hello from Docker'

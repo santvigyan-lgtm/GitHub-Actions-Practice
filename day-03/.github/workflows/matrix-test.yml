@@ -1,0 +1,66 @@
+# =============================================================
+# Day 3 — Problem 1: Matrix Build
+# =============================================================
+# Matrix: node × os with include/exclude and fail-fast: false
+# =============================================================
+
+name: Matrix Test
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [16, 18, 20]
+        os: [ubuntu-latest, windows-latest]
+        include:
+          # Add an extra combination: Node 14 on ubuntu only
+          - node: 14
+            os: ubuntu-latest
+            experimental: true
+        exclude:
+          # Remove: Node 16 on Windows
+          - node: 16
+            os: windows-latest
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental == true }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Print Matrix Info
+        run: |
+          echo "=========================================="
+          echo "🔢 MATRIX COMBINATION"
+          echo "=========================================="
+          echo "Node Version: ${{ matrix.node }}"
+          echo "OS:           ${{ matrix.os }}"
+          echo "Experimental: ${{ matrix.experimental || 'false' }}"
+          echo "Runner:       ${{ runner.os }}"
+          echo "=========================================="
+
+      - name: Check Node Version
+        run: node --version
+
+      - name: Simulate Test
+        run: |
+          echo "🧪 Running tests on Node ${{ matrix.node }} / ${{ matrix.os }}"
+          echo "✅ Tests passed!"
+
+      - name: Deploy (Ubuntu only)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "🚀 Deploy step — only runs on Ubuntu"
+          echo "Skipped on: windows-latest"

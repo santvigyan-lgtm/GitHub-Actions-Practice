@@ -1,0 +1,12 @@
+# =============================================================
+# SPEED DRILL 5 — Matrix with include/exclude
+# TIME: 3 minutes | TRY WRITING FROM SCRATCH!
+# =============================================================
+# Write a matrix strategy with:
+# - python: [3.9, 3.10, 3.11] × os: [ubuntu-latest, windows-latest]
+# - include: python 3.12 on ubuntu only
+# - exclude: python 3.9 on windows
+# - fail-fast: false
+# =============================================================
+
+# YOUR CODE HERE:

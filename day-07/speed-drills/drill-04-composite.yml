@@ -1,0 +1,11 @@
+# =============================================================
+# SPEED DRILL 4 — Composite action.yml
+# TIME: 5 minutes | TRY WRITING FROM SCRATCH!
+# =============================================================
+# Write a composite action with:
+# - 2 inputs: tool-version, scan-path
+# - 1 output: result-count
+# - Multiple steps using shell: bash
+# =============================================================
+
+# YOUR CODE HERE:

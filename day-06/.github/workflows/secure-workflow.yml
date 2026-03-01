@@ -1,0 +1,88 @@
+# =============================================================
+# Day 6 — Secure Workflow with Minimal Permissions
+# =============================================================
+# Demonstrates: principle of least privilege, self-hosted runners
+# =============================================================
+
+name: Secure Pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Workflow-level: minimal permissions (principle of least privilege)
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # Inherits workflow-level permissions: contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Security Scan
+        run: |
+          echo "🔒 Running security scan..."
+          echo "Permissions: contents: read (read-only)"
+          echo "✅ No vulnerabilities found!"
+
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          echo "🏗️ Building application..."
+          echo "✅ Build complete!"
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    # Job-level: override permissions for publishing
+    permissions:
+      contents: write      # Push tags
+      packages: write      # Push Docker images
+      id-token: write      # OIDC token for cloud auth
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish Package
+        run: |
+          echo "📦 Publishing package..."
+          echo "Using elevated permissions:"
+          echo "  contents: write  (to push tags)"
+          echo "  packages: write  (to push Docker images)"
+          echo "  id-token: write  (for OIDC cloud auth)"
+          echo "✅ Package published!"
+
+      - name: Permission Info
+        run: |
+          echo "=========================================="
+          echo "🔑 PERMISSIONS SUMMARY"
+          echo "=========================================="
+          echo "Workflow default: contents: read"
+          echo "This job override: contents+packages+id-token: write"
+          echo ""
+          echo "💡 EXAM KEY POINTS:"
+          echo "  - Always set minimal permissions at workflow level"
+          echo "  - Override at job level only where needed"
+          echo "  - permissions: {} = NO permissions at all"
+          echo "  - permissions: read-all = read everything"
+          echo "  - permissions: write-all = write everything (avoid!)"
+          echo "=========================================="
+
+  # Example: Self-hosted runner targeting (commented - uncomment if you have one)
+  # self-hosted-job:
+  #   runs-on: [self-hosted, linux, x64, gpu]
+  #   steps:
+  #     - name: Run on Self-Hosted
+  #       run: |
+  #         echo "Running on self-hosted runner!"
+  #         echo "Labels must EXACTLY match: self-hosted, linux, x64, gpu"

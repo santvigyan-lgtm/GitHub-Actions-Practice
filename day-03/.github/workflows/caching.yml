@@ -1,0 +1,62 @@
+# =============================================================
+# Day 3 — Problem 3: Dependency Caching
+# =============================================================
+# Cache npm node_modules using hashFiles for cache key
+# =============================================================
+
+name: Caching Demo
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+
+jobs:
+  build-with-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache npm dependencies
+        id: npm-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Check Cache Hit
+        run: |
+          if [ "${{ steps.npm-cache.outputs.cache-hit }}" == "true" ]; then
+            echo "✅ Cache HIT! Dependencies restored from cache"
+          else
+            echo "❌ Cache MISS! Will install fresh dependencies"
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci || echo "No package-lock.json found — skipping npm ci"
+
+      - name: Build
+        run: |
+          echo "🏗️ Building project..."
+          npm run build 2>/dev/null || echo "No build script — skipping"
+          echo "✅ Build complete!"
+
+      - name: Show Cache Info
+        run: |
+          echo "=========================================="
+          echo "📋 CACHE DETAILS"
+          echo "=========================================="
+          echo "Cache Key:   ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}"
+          echo "Cache Hit:   ${{ steps.npm-cache.outputs.cache-hit }}"
+          echo "Cache Path:  ~/.npm"
+          echo "=========================================="

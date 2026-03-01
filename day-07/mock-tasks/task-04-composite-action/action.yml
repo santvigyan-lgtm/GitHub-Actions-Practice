@@ -1,0 +1,21 @@
+# =============================================================
+# MOCK TASK 4 — Composite Security Action
+# =============================================================
+# INSTRUCTIONS: Write a composite action that:
+# - Installs a security scanning tool (simulate with echo)
+# - Runs the scan
+# - Outputs the vulnerability count
+# - Fails the workflow if count > 0
+# 
+# TIME TARGET: 10 minutes
+# TRY WRITING FROM SCRATCH!
+# =============================================================
+
+# YOUR CODE HERE:
+# name: ???
+# description: ???
+# inputs: ???
+# outputs: ???
+# runs:
+#   using: 'composite'
+#   steps: ???

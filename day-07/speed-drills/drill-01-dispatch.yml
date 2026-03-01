@@ -1,0 +1,11 @@
+# =============================================================
+# SPEED DRILL 1 — workflow_dispatch with 3 inputs
+# TIME: 3 minutes | TRY WRITING FROM SCRATCH!
+# =============================================================
+# Write workflow_dispatch with:
+# - string input: message
+# - boolean input: debug  
+# - choice input: env (dev/staging/prod)
+# =============================================================
+
+# YOUR CODE HERE:

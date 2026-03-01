@@ -1,0 +1,29 @@
+# =============================================================
+# Day 1 — Problem 2: PR-Only Trigger
+# =============================================================
+# Trigger: pull_request to main branch ONLY
+# Task: Run linting only when PRs target main
+# =============================================================
+
+name: PR Linter
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Linting
+        run: |
+          echo "🔍 Linting code on PR to main..."
+          echo "PR Branch: ${{ github.head_ref }}"
+          echo "Target Branch: ${{ github.base_ref }}"
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+
+      - name: Lint Check Passed
+        run: echo "✅ All lint checks passed!"

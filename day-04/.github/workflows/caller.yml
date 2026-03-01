@@ -1,0 +1,69 @@
+# =============================================================
+# Day 4 — Problem 3 & 4: Caller Workflow
+# =============================================================
+# Calls the reusable deploy workflow, passing inputs and secrets
+# Demonstrates both explicit secrets and secrets: inherit
+# =============================================================
+
+name: CI/CD Pipeline (Caller)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        type: choice
+        options: [dev, staging, production]
+        default: 'dev'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build & Tag
+        id: tag
+        run: |
+          TAG="v1.2.${{ github.run_number }}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "🏗️ Built image with tag: ${TAG}"
+
+  # Method 1: Explicit secret passing
+  deploy-staging:
+    needs: build
+    uses: ./.github/workflows/deploy-reusable.yml
+    with:
+      environment: staging
+      image-tag: ${{ needs.build.outputs.image-tag }}
+    secrets:
+      DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
+
+  # Method 2: Inherit ALL secrets from caller
+  deploy-production:
+    needs: [build, deploy-staging]
+    uses: ./.github/workflows/deploy-reusable.yml
+    with:
+      environment: production
+      image-tag: ${{ needs.build.outputs.image-tag }}
+    secrets: inherit    # ← Passes ALL caller secrets automatically
+
+  show-results:
+    needs: [deploy-staging, deploy-production]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "=========================================="
+          echo "📋 DEPLOYMENT RESULTS"
+          echo "=========================================="
+          echo "Staging URL:    ${{ needs.deploy-staging.outputs.deploy-url }}"
+          echo "Staging Status: ${{ needs.deploy-staging.outputs.deploy-status }}"
+          echo "Prod URL:       ${{ needs.deploy-production.outputs.deploy-url }}"
+          echo "Prod Status:    ${{ needs.deploy-production.outputs.deploy-status }}"
+          echo "=========================================="

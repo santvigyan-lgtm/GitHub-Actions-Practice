@@ -1,0 +1,41 @@
+# =============================================================
+# Day 1 — Problem 5: Multi-Trigger with Path Filters
+# =============================================================
+# Trigger: push AND pull_request with path/branch filters
+# Task: Only run when src/ files change, skip release branches
+# =============================================================
+
+name: CI Pipeline
+
+on:
+  push:
+    branches-ignore: ['release/**']
+    paths: ['src/**']
+  pull_request:
+    branches: [main]
+    paths: ['src/**']
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect Trigger
+        run: |
+          echo "🔎 CI Pipeline Triggered!"
+          echo "Event: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+
+      - name: Build
+        run: |
+          echo "🏗️ Building project..."
+          echo "Only runs when src/** files change"
+          echo "Skips release/** branches"
+
+      - name: Test
+        run: |
+          echo "🧪 Running tests..."
+          echo "✅ All tests passed!"
