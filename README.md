@@ -57,8 +57,8 @@
 
 ```bash
 # Clone this repo
-git clone https://github.com/<your-username>/gh-actions-practice.git
-cd gh-actions-practice
+git clone https://github.com/santvigyan-lgtm/GitHub-Actions-Practice.git
+cd GitHub-Actions-Practice
 
 # Each day: create a new branch, write workflows, push, watch them run
 git checkout -b day-01
