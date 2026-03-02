@@ -1,0 +1,36 @@
+name: Manual trigger workflow with input
+
+on: workflow_dispatch:
+    inputs:
+        environment:
+            description: "Environment to deploy"
+            required: true
+            default: "dev"
+            type: choice
+            options:
+                - dev
+                - staging
+                - prod
+        debug:
+            description: "Enable debug mode"
+            required: false
+            default: false
+            type: boolean
+        message:
+            description: "Message to display"
+            required: false
+            default: "Workflow triggered manually"
+            type: string
+
+    
+jobs:
+    print_message:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Print message
+              run: |
+                 echo "Enviroment variable: ${{ inputs.environment }}"
+                 echo "Debug mode: ${{ inputs.debug }}"
+                 echo "Message: ${{ inputs.message }}" 
+
+            
