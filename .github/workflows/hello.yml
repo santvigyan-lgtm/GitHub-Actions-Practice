@@ -1,0 +1,19 @@
+name: Hello
+
+on: 
+    push:
+        branches: ["*"]
+
+jobs:
+    greet:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: hello
+              run: echo "Hello GitHub Actions!"
+
+            - name: system info
+              run: |
+                echo "Runner OS: ${{ runner.os }}"
+                echo "Runner Arch: ${{ runner.arch }}"
+                echo "Workspace: ${{ github.workspace }}"
