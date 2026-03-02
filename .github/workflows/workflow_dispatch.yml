@@ -1,26 +1,27 @@
 name: Manual trigger workflow with input
 
-on: workflow_dispatch:
-    inputs:
-        environment:
-            description: "Environment to deploy"
-            required: true
-            default: "dev"
-            type: choice
-            options:
-                - dev
-                - staging
-                - prod
-        debug:
-            description: "Enable debug mode"
-            required: false
-            default: false
-            type: boolean
-        message:
-            description: "Message to display"
-            required: false
-            default: "Workflow triggered manually"
-            type: string
+on: 
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: "Environment to deploy"
+                required: true
+                default: "dev"
+                type: choice
+                options:
+                    - dev
+                    - staging
+                    - prod
+            debug:
+                description: "Enable debug mode"
+                required: false
+                default: false
+                type: boolean
+            message:
+                description: "Message to display"
+                required: false
+                default: "Workflow triggered manually"
+                type: string
 
     
 jobs:
