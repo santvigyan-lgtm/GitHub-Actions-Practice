@@ -2,7 +2,7 @@ name: Hello
 
 on: 
     push:
-        branches: [*]
+        branches: ["*"]
 
 jobs:
     greet:
