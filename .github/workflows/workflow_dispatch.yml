@@ -1,7 +1,7 @@
 name: Manual trigger workflow with input
 
 on: 
-    workflow_dispatch:
+    workflow_dispatch: 
         inputs:
             environment:
                 description: "Environment to deploy"
@@ -30,7 +30,7 @@ jobs:
         steps:
             - name: Print message
               run: |
-                 echo "Enviroment variable: ${{ inputs.environment }}"
+                 echo "Environment variable: ${{ inputs.environment }}"
                  echo "Debug mode: ${{ inputs.debug }}"
                  echo "Message: ${{ inputs.message }}" 
 
