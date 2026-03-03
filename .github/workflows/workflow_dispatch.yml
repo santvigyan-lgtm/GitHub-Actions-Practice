@@ -31,8 +31,8 @@ jobs:
         steps:
             - name: Print message
               run: |
-                 echo "Environment variable: ${{ inputs.environment }}"
-                 echo "Debug mode: ${{ inputs.debug }}"
-                 echo "Message: ${{ inputs.message }}" 
+                 echo "Environment variable: ${{ inputs.environment || 'dev' }}"
+                 echo "Debug mode: ${{ inputs.debug || 'false' }}"
+                 echo "Message: ${{ inputs.message || 'Workflow triggered manually' }}" 
 
             
