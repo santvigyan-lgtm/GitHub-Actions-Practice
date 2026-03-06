@@ -2,10 +2,11 @@ name: day1 problem 5
 
 on:
     push:
+        branches:
+            - main
         paths:
             - '/day-01/src/**'
-        branches-ignore:
-            - 'release/**'
+        
     pull_request:
         branches:
             - main
