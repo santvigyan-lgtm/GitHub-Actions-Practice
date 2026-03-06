@@ -12,6 +12,7 @@ on:
             - main
         paths:
             - '/day-01/src/**'
+    workflow_dispatch:
 
 jobs:
     build:
