@@ -1,0 +1,31 @@
+name: day1 problem 5
+
+on:
+    push:
+        paths:
+            - 'src/**'
+        branches-ignore:
+            - 'release/**'
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'src/**'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Python 3.10
+              uses: actions/setup-python@v4
+              with:
+                python-version: 3.10
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+            - name: Run tests
+              run: |
+                pip --version
+                python --version
