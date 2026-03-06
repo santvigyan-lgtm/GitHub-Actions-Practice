@@ -1,0 +1,14 @@
+name: d1 p4
+
+on:
+    schedule:
+        - cron: '0 9 * * 1' # every Monday at 9:00 AM
+    workflow_dispatch:
+
+jobs:
+    print:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Print message
+              run: echo "Weekly check running on ${{ github.event_name }}"
