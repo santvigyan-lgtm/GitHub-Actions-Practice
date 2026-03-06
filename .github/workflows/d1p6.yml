@@ -14,10 +14,10 @@ jobs:
         steps:
         - name: Print All envrionment variables
           run: |
-            - echo "Event name: ${{ github.event_name }}"
-            - echo "Repository: ${{ github.repository }}"
-            - echo "Actor: ${{ github.actor }}"
-            - echo "Workflow: ${{ github.workflow }}"
-            - echo "Job: ${{ github.job }}"
-            - echo "Ref: ${{ github.ref }}"
+            echo "Event name: ${{ github.event_name }}"
+            echo "Repository: ${{ github.repository }}"
+            echo "Actor: ${{ github.actor }}"
+            echo "Workflow: ${{ github.workflow }}"
+            echo "Job: ${{ github.job }}"
+            echo "Ref: ${{ github.ref }}"
 
