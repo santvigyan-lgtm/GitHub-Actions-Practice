@@ -3,14 +3,14 @@ name: day1 problem 5
 on:
     push:
         paths:
-            - 'src/**'
+            - '../../day-01/src/**'
         branches-ignore:
             - 'release/**'
     pull_request:
         branches:
             - main
         paths:
-            - 'src/**'
+            - '../../day-01/src/**'
 
 jobs:
     build:
