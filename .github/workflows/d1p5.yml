@@ -5,13 +5,13 @@ on:
         branches:
             - main
         paths:
-            - '/day-01/src/**'
+            - 'day-01/src/**'
         
     pull_request:
         branches:
             - main
         paths:
-            - '/day-01/src/**'
+            - 'day-01/src/**'
     workflow_dispatch:
 
 jobs:
