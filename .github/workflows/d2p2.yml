@@ -16,7 +16,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && success()
+    if: github.ref == 'refs/heads/main' && success() 
     steps:
         - name: deploy job
           run: echo "deploying to production"
