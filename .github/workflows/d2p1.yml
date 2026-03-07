@@ -1,0 +1,32 @@
+name: day2 Problem 1
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: build job
+          run: |
+            echo "job: ${{github.job}}, time: ${{github.event.head_commit.timestamp}}"
+
+    test:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: test job
+          run: |
+            echo "job: ${{github.job}}, time: ${{github.event.head_commit.timestamp}}"
+
+    deploy:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: deploy job
+          run: |
+            echo "job: ${{github.job}}, time: ${{github.event.head_commit.timestamp}}"
